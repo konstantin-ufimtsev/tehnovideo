@@ -47,19 +47,19 @@ def get_page_data(urls: list) -> dict:
         driver.get(url)
         sku_name = driver.find_element(By.TAG_NAME, "h1").text
         try:
-            article = driver.find_element(By.CLASS_NAME, 'changeArticle').text
+            article = driver.find_element(By.CLASS_NAME, 'info_item').find_element(By.CLASS_NAME, 'value').text
         except:
             article = ''
         try:
-            current_price = int(driver.find_element(By.CLASS_NAME, 'fixContainer').find_element(By.CLASS_NAME, 'priceVal').text.strip(' р.').replace(' ', ''))
+            current_price = int(driver.find_element(By.CLASS_NAME, 'right_column_single').find_element(By.CLASS_NAME, 'price_value').text.replace(' ', ''))
         except:
             current_price = 0
-        type = url.replace('https://www.coxo.ru/catalog/','').split("/")[0]
+        type = url.replace('https://uima.ru/','').split("/")[0]
         
         model = ''
         symbol_table = 'abcdefghijklmnopqrstuvwxyz1234567890'
         symbol_to_replace = '\/._-*+@#$%& '
-        for symbol in article:
+        for symbol in sku_name:
             if symbol.lower() in symbol_table:
                 model += symbol.lower()
             elif symbol in symbol_to_replace:
@@ -76,16 +76,17 @@ def get_page_data(urls: list) -> dict:
             'model' : model,
         }
         print(data)
-        #database.write_to_database(data)
+        database.write_to_database(data)
+        
     return data
 
 def main():
 
     url_list = [
-        #"https://uima.ru/stiralnye_mashiny/",
+        "https://uima.ru/stiralnye_mashiny/",
         "https://uima.ru/otparivateli/",
-        #"https://uima.ru/monitory/",
-        #"https://uima.ru/smartfony/",
+        "https://uima.ru/monitory/",
+        "https://uima.ru/smartfony/",
     ]
     
     for url in url_list:
