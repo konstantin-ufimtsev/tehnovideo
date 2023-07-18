@@ -9,8 +9,6 @@ import time
 #getting the list of SKU urls
 def get_sku_urls(outer_url: str) -> list:
     
-    
-    
     options = webdriver.ChromeOptions()
     options.add_argument("user-agent=Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0")
     options.add_argument("--disable-blink-features=AutomationControlled")
@@ -31,14 +29,14 @@ def get_sku_urls(outer_url: str) -> list:
     #gathering the links of SKU's
     for i in range(1, pagen_len + 1):
         driver.get(f'{outer_url}page-{i}/')
-        links = driver.find_elements(By.CLASS_NAME, 'item')
+        links = driver.find_element(By.CLASS_NAME, 'catalogue-goods').find_elements(By.TAG_NAME, 'a')
         for link in links:
-            print(link.text)
-            sku_url.append(link.get_attribute('href'))
+            if link.get_attribute('href') != 'javascript:void();':
+                sku_url.append(link.get_attribute('href'))
     
     for sku in sku_url:
         print(sku)
-    """
+    
     print(len(sku_url)) #qty of sku in category
     return sku_url
     
@@ -50,16 +48,17 @@ def get_page_data(urls: list) -> dict:
     data= {}
     for url in urls:
         driver.get(url)
+        time.sleep(0.5)
         sku_name = driver.find_element(By.TAG_NAME, "h1").text
         try:
-            article = driver.find_element(By.XPATH, '//*[@id="content"]/div[1]/div[1]/div[1]/div[3]/div[2]/span').text 
+            article = driver.find_element(By.XPATH, '//*[@id="body"]/div[1]/main/section[1]/div[1]/aside[2]/ul/li[1]/strong').text 
         except:
             article = ''
         try:
-            current_price = int(driver.find_element(By.ID, '_price').text.replace(',-', '').replace('Цена: ', '').replace(' ', '').strip())
-        except:
+            current_price = driver.find_element(By.XPATH, '//*[@id="body"]/div[1]/main/section[1]/div[1]/aside[2]/div[2]/div[1]').text.replace(' Р','').replace(' ', '').split('\n')[-1]
+        except:                                             
             current_price = 0
-        type = url.replace('https://baltmaximus.com/','').split("/")[0]
+        type = url.split("/")[-3]
         
         model = ''
         symbol_table = 'abcdefghijklmnopqrstuvwxyz1234567890'
@@ -84,19 +83,19 @@ def get_page_data(urls: list) -> dict:
         database.write_to_database(data)
         
     return data
-    """
+    
 def main():
 
     url_list = [
         "https://www.rozetka39.ru/tehnika/krupnaya_bitovaya_tehnika/stiralnie_mashini/",
-        #"https://www.rozetka39.ru/tehnika/chistota_i_poryadok/otparivateli/",
-        #"https://www.rozetka39.ru/noutbuki_i_komputeri/monitori/",
-        #"https://www.rozetka39.ru/telefoni_i_plansheti/smartfoni_i_telefoni/tip_smartfon/",
+        "https://www.rozetka39.ru/tehnika/chistota_i_poryadok/otparivateli/",
+        "https://www.rozetka39.ru/noutbuki_i_komputeri/monitori/",
+        "https://www.rozetka39.ru/telefoni_i_plansheti/smartfoni_i_telefoni/tip_smartfon/",
     ]
     
     for url in url_list:
         
-        get_sku_urls(url)
+        get_page_data(get_sku_urls(url))
 
 if __name__ == '__main__':
     main()
