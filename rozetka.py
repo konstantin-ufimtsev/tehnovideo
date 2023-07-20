@@ -49,7 +49,13 @@ def get_page_data(urls: list) -> dict:
     for url in urls:
         driver.get(url)
         time.sleep(0.5)
-        sku_name = driver.find_element(By.TAG_NAME, "h1").text
+        sku_name = driver.find_element(By.TAG_NAME, "h1").text.split()
+        keyword= 'отзывов'
+        if keyword in sku_name:
+            sku_name = ' '.join(sku_name[:-2])
+        else:
+            sku_name = ' '.join(sku_name)
+        
         try:
             article = driver.find_element(By.XPATH, '//*[@id="body"]/div[1]/main/section[1]/div[1]/aside[2]/ul/li[1]/strong').text 
         except:
@@ -88,9 +94,9 @@ def main():
 
     url_list = [
         "https://www.rozetka39.ru/tehnika/krupnaya_bitovaya_tehnika/stiralnie_mashini/",
-        "https://www.rozetka39.ru/tehnika/chistota_i_poryadok/otparivateli/",
-        "https://www.rozetka39.ru/noutbuki_i_komputeri/monitori/",
-        "https://www.rozetka39.ru/telefoni_i_plansheti/smartfoni_i_telefoni/tip_smartfon/",
+        #"https://www.rozetka39.ru/tehnika/chistota_i_poryadok/otparivateli/",
+        #"https://www.rozetka39.ru/noutbuki_i_komputeri/monitori/",
+        #"https://www.rozetka39.ru/telefoni_i_plansheti/smartfoni_i_telefoni/tip_smartfon/",
     ]
     
     for url in url_list:
@@ -98,4 +104,4 @@ def main():
         get_page_data(get_sku_urls(url))
 
 if __name__ == '__main__':
-    main()
+    main()  
