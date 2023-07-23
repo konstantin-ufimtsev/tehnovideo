@@ -53,7 +53,7 @@ def get_page_data(urls: list) -> dict:
         sku_name = driver.find_element(By.ID, "pagetitle").text
         
         try:
-            article = driver.find_element(By.CLASS_NAME, 'item-article').text 
+            article = driver.find_element(By.CLASS_NAME, 'item-article').text.replace('Артикул: ', '')
         except:
             article = ''
         try:

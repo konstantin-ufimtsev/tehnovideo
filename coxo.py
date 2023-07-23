@@ -41,6 +41,7 @@ def get_page_data(urls: list) -> dict:
     for url in urls:
         driver.get(url)
         sku_name = driver.find_element(By.TAG_NAME, "h1").text
+      
         try:
             article = driver.find_element(By.CLASS_NAME, 'changeArticle').text
         except:
@@ -54,7 +55,7 @@ def get_page_data(urls: list) -> dict:
         model = ''
         symbol_table = 'abcdefghijklmnopqrstuvwxyz1234567890'
         symbol_to_replace = '\/._-*+@#$%& '
-        for symbol in article:
+        for symbol in sku_name:
             if symbol.lower() in symbol_table:
                 model += symbol.lower()
             elif symbol in symbol_to_replace:

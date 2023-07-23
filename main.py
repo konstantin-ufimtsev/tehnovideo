@@ -23,7 +23,6 @@ def main():
     coxo.main()
     end_coxo = time.perf_counter()
     
-    
     start_uima = time.perf_counter()
     uima.main()
     end_uima = time.perf_counter()
